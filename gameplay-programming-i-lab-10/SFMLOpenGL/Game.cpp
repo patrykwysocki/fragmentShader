@@ -33,10 +33,67 @@ void Game::run()
 			m_matrix = m_matrix.rotationY(0.1);
 			transformation(m_matrix);
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			m_matrix = m_matrix.rotationX(0.1);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			m_matrix = m_matrix.rotationY(-0.1);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			m_matrix = m_matrix.rotationX(-0.1);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+		{
+			m_matrix = m_matrix.rotationZ(-0.1);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+		{
+			m_matrix = m_matrix.rotationZ(0.1);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		{
+			m_matrix = m_matrix.scale(99,99,99);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+		{
+			m_matrix = m_matrix.scale(101,101,101);
+			transformation(m_matrix);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			m_matrix = m_matrix.translate(0.001,0);
+			transformation(m_matrix);
+		}
 		update();
 		render();
 	}
 
+}
+
+std::string Game::loadShaderFromFile(const std::string & textFile)
+{
+	ifstream file;
+	file.open(((textFile).c_str()));
+	string output;
+	string line;
+	if (file.is_open())
+	{
+		while (!file.eof())
+		{
+			getline(file, line);
+			output.append(line + "\n");
+		}
+	}
+	return output;
 }
 
 typedef struct
@@ -108,13 +165,38 @@ void Game::initialize()
 
 	vertex[1].color[0] = 0.0f;
 	vertex[1].color[1] = 0.0f;
-	vertex[1].color[2] = 0.0f;
-	vertex[1].color[3] = 1.0f;
+	vertex[1].color[2] = 1.0f;
+	vertex[1].color[3] = 0.0f;
 
 	vertex[2].color[0] = 0.0f;
-	vertex[2].color[1] = 0.0f;
+	vertex[2].color[1] = 1.0f;
 	vertex[2].color[2] = 0.0f;
-	vertex[2].color[3] = 1.0f;
+	vertex[2].color[3] = 0.0f;
+
+	vertex[3].color[0] = 1.0f;
+	vertex[3].color[1] = 0.0f;
+	vertex[3].color[2] = 0.0f;
+	vertex[3].color[3] = 0.0f;
+
+	vertex[4].color[0] = 0.0f;
+	vertex[4].color[1] = 1.0f;
+	vertex[4].color[2] = 0.0f;
+	vertex[4].color[3] = 0.0f;
+
+	vertex[5].color[0] = 0.0f;
+	vertex[5].color[1] = 0.0f;
+	vertex[5].color[2] = 1.0f;
+	vertex[5].color[3] = 0.0f;
+
+	vertex[6].color[0] = 0.0f;
+	vertex[6].color[1] = 0.0f;
+	vertex[6].color[2] = 0.0f;
+	vertex[6].color[3] = 1.0f;
+
+	vertex[7].color[0] = 0.0f;
+	vertex[7].color[1] = 0.0f;
+	vertex[7].color[2] = 1.0f;
+	vertex[7].color[3] = 0.0f;
 
 	//front
 	triangles[0] = 0;   triangles[1] = 1;   triangles[2] = 2;
@@ -156,14 +238,15 @@ void Game::initialize()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	/* Vertex Shader which would normally be loaded from an external file */
-	const char* vs_src = "#version 400\n\r"
-		"in vec4 sv_position;"
-		"in vec4 sv_color;"
-		"out vec4 color;"
-		"void main() {"
-		"	color = sv_color;"
-		"	gl_Position = sv_position;"
-		"}"; //Vertex Shader Src
+	std::string vertexShader = loadShaderFromFile("VertexShader.txt");
+	const char* vs_src = vertexShader.c_str();  //"#version 400\n\r"
+	//	"in vec4 sv_position;"
+	//	"in vec4 sv_color;"
+	//	"out vec4 color;"
+	//	"void main() {"
+	//	"	color = sv_color;"
+	//	"	gl_Position = sv_position;"
+	//	"}"; //Vertex Shader Src
 
 	DEBUG_MSG("Setting Up Vertex Shader");
 
@@ -182,14 +265,14 @@ void Game::initialize()
 	{
 		DEBUG_MSG("ERROR: Vertex Shader Compilation Error");
 	}
-
+	std::string fragmentShader = loadShaderFromFile("FragmentShader.txt");
 	/* Fragment Shader which would normally be loaded from an external file */
-	const char* fs_src = "#version 400\n\r"
-		"in vec4 color;"
-		"out vec4 fColor;"
-		"void main() {"
-		"	fColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);"
-		"}"; //Fragment Shader Src
+	const char* fs_src = fragmentShader.c_str();/*"#version 400\n\r"*/
+	//	"in vec4 color;"
+	//	"out vec4 fColor;"
+	//	"void main() {"
+	//	"	fColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);"
+	//	"}"; //Fragment Shader Src
 
 	DEBUG_MSG("Setting Up Fragment Shader");
 

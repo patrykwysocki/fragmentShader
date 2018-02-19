@@ -10,6 +10,7 @@
 #include <SFML/OpenGL.hpp>
 #include "MyMatrix3D.h"
 #include "MyVector3D.h"
+#include <fstream>
 
 using namespace std;
 using namespace sf;
@@ -30,7 +31,7 @@ private:
 	void transformation(MyMatrix3 &);
 	MyVector3D m_cubePoints[8];
 	MyMatrix3 m_matrix;
-
+	std::string loadShaderFromFile(const std::string & textFile);
 	Clock clock;
 	Time elapsed;
 
