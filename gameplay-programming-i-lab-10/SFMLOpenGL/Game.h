@@ -29,7 +29,10 @@ private:
 	void render();
 	void unload();
 	void transformation(MyMatrix3 &);
+	void translation(double translation, const MyMatrix3::Axis & m_axis);
+	void translateCenterPoint(double translateCenterPoint, const MyMatrix3::Axis&m_axis);
 	MyVector3D m_cubePoints[8];
+	MyVector3D m_cubeCenterPoint = { 0,0,0 };
 	MyMatrix3 m_matrix;
 	std::string loadShaderFromFile(const std::string & textFile);
 	Clock clock;

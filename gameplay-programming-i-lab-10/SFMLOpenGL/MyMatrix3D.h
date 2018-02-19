@@ -8,6 +8,7 @@
 class MyMatrix3
 {
 public:
+	enum class Axis{X,Y,Z};
 	MyMatrix3();
 	MyMatrix3(MyVector3D row1,MyVector3D row2,MyVector3D row3);
 	MyMatrix3(double a11, double a12, double a13,
@@ -29,6 +30,7 @@ public:
 	MyMatrix3 translate(double dx, double dy)const;
 	MyMatrix3 scale(double dx, double dy, double dz)const;
 	MyMatrix3 operator-();
+	static MyVector3D translation(MyVector3D & vector, double translateBy, const Axis &);
 
 	MyMatrix3 rotationX(double angle)const;
 	MyMatrix3 rotationY(double angle)const;

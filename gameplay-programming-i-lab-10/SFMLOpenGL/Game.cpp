@@ -69,9 +69,20 @@ void Game::run()
 			transformation(m_matrix);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{ 
+			translation(-0.01, MyMatrix3::Axis::X);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			m_matrix = m_matrix.translate(0.001,0);
-			transformation(m_matrix);
+			translation(0.01, MyMatrix3::Axis::X);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			translation(0.01, MyMatrix3::Axis::Y);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			translation(-0.01, MyMatrix3::Axis::Y);
 		}
 		update();
 		render();
@@ -118,12 +129,16 @@ GLuint	index, //Index to draw
 
 void Game::initialize()
 {
+	glEnable(GL_CULL_FACE);
+	//glEnable(GL_DEPTH_TEST);
 	isRunning = true;
 	GLint isCompiled = 0;
 	GLint isLinked = 0;
 
 	glewInit();
-
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
 	/* Vertices counter-clockwise winding */
 	vertex[0].coordinate[0] = 0.5;
 	vertex[0].coordinate[1] = 0.5;
@@ -320,6 +335,7 @@ void Game::initialize()
 
 void Game::update()
 {
+	glCullFace(GL_BACK);
 	elapsed = clock.getElapsedTime();
 
 	if (elapsed.asSeconds() >= 1.0f)
@@ -416,5 +432,38 @@ void Game::transformation(MyMatrix3 & transform)
 		vertex[i].coordinate[0] = m_cubePoints[i].getX();
 		vertex[i].coordinate[1] = m_cubePoints[i].getY();
 		vertex[i].coordinate[2] = m_cubePoints[i].getZ();
+	}
+}
+
+void Game::translation(double translation, const MyMatrix3::Axis & m_axis)
+{
+	translateCenterPoint(translation, m_axis);
+	for (int i = 0;i < 8; i++)
+	{
+		m_cubePoints[i] = MyVector3D(vertex[i].coordinate[0], vertex[i].coordinate[1], vertex[i].coordinate[2]);
+		m_cubePoints[i] = MyMatrix3::translation(m_cubePoints[i], translation, m_axis);
+		vertex[i].coordinate[0] = m_cubePoints[i].getX();
+		vertex[i].coordinate[1] = m_cubePoints[i].getY();
+		vertex[i].coordinate[2] = m_cubePoints[i].getZ();
+	}
+
+}
+
+void Game::translateCenterPoint(double translateCenterPoint, const MyMatrix3::Axis & m_axis)
+{
+	switch (m_axis)
+	{
+	case MyMatrix3::Axis::X:
+		m_cubeCenterPoint = MyVector3D(m_cubeCenterPoint.getX() + translateCenterPoint, m_cubeCenterPoint.getY(), m_cubeCenterPoint.getZ());
+		break;
+	case MyMatrix3::Axis::Y:
+		m_cubeCenterPoint = MyVector3D(m_cubeCenterPoint.getX(), m_cubeCenterPoint.getY() + translateCenterPoint, m_cubeCenterPoint.getZ());
+		break;
+	case MyMatrix3::Axis::Z:
+		m_cubeCenterPoint = MyVector3D(m_cubeCenterPoint.getX(), m_cubeCenterPoint.getY(), m_cubeCenterPoint.getZ() + translateCenterPoint);
+		break;
+	default:
+		m_cubeCenterPoint = MyVector3D(m_cubeCenterPoint.getX(), m_cubeCenterPoint.getY(), m_cubeCenterPoint.getZ());
+		break;
 	}
 }

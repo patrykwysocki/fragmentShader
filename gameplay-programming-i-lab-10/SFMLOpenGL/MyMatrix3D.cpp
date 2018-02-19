@@ -148,6 +148,7 @@ MyMatrix3 MyMatrix3::operator-()
 		-m_a21, -m_a22, -m_a23, 
 		-m_a31, -m_a32, -m_a33);
 }
+
 std::string MyMatrix3::toString()
 {
 	return std::string("(" + std::to_string(m_a11) + "," + std::to_string(m_a12) + "," + std::to_string(m_a13)
@@ -217,4 +218,45 @@ MyMatrix3 MyMatrix3::scale3D(double dx) const
 	return MyMatrix3(static_cast<double>(dx), 0, 0,
 		0, static_cast<double>(dx), 0,
 		0, 0, static_cast<double>(dx));
+}
+MyVector3D MyMatrix3::translation(MyVector3D & vector, double translateBy, const Axis &t_axis)
+{
+	double row1[4];
+	double row2[4];
+	double row3[4];
+	double row4[4];
+	double answer[4];
+	switch (t_axis)
+	{
+	case Axis::X:
+		row1[0] = 1; row1[1] = 0; row1[2] = 0; row1[3] = translateBy;
+		row2[0] = 0; row2[1] = 1; row2[2] = 0; row2[3] = 0;
+		row3[0] = 0; row3[1] = 0; row3[2] = 1; row3[3] = 0;
+		row4[0] = 0; row4[1] = 0; row4[2] = 0; row4[3] = 1;
+		break;
+	case Axis::Y:
+		row1[0] = 1; row1[1] = 0; row1[2] = 0; row1[3] = 0;
+		row2[0] = 0; row2[1] = 1; row2[2] = 0; row2[3] = translateBy;
+		row3[0] = 0; row3[1] = 0; row3[2] = 1; row3[3] = 0;
+		row4[0] = 0; row4[1] = 0; row4[2] = 0; row4[3] = 1;
+		break;
+	case Axis::Z:
+		row1[0] = 1; row1[1] = 0; row1[2] = 0; row1[3] = 0;
+		row2[0] = 0; row2[1] = 1; row2[2] = 0; row2[3] = 0;
+		row3[0] = 0; row3[1] = 0; row3[2] = 1; row3[3] = translateBy;
+		row4[0] = 0; row4[1] = 0; row4[2] = 0; row4[3] = 1;
+		break;
+
+	default:
+		row1[0] = 1; row1[1] = 0; row1[2] = 0; row1[3] = 0;
+		row2[0] = 0; row2[1] = 1; row2[2] = 0; row2[3] = 0;
+		row3[0] = 0; row3[1] = 0; row3[2] = 1; row3[3] = 0;
+		row4[0] = 0; row4[1] = 0; row4[2] = 0; row4[3] = 1;
+		break;
+	}
+	answer[0] = ((row1[0] * vector.getX()) + (row1[1] * vector.getY()) + (row1[2] * vector.getZ()) + (row1[3] * 1));
+	answer[1] = ((row2[0] * vector.getX()) + (row2[1] * vector.getY()) + (row2[2] * vector.getZ()) + (row2[3] * 1));
+	answer[2] = ((row3[0] * vector.getX()) + (row3[1] * vector.getY()) + (row3[2] * vector.getZ()) + (row3[3] * 1));
+	answer[3] = ((row4[0] * vector.getX()) + (row4[1] * vector.getY()) + (row4[2] * vector.getZ()) + (row4[3] * 1));
+	return MyVector3D(answer[0],answer[1],answer[2]);
 }
